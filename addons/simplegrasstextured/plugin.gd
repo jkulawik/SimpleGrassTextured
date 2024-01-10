@@ -258,71 +258,30 @@ func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 			_mouse_event = EVENT_MOUSE.EVENT_MOVE
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
 
+func _verify_global_shader_parameter(parameter: String, type: String, default_value) -> void:
+	if not ProjectSettings.has_setting("shader_globals/" + parameter):
+		var setting = {"type": type, "value": default_value}
+		ProjectSettings.set_setting("shader_globals/" + parameter, setting)
+		if RenderingServer.global_shader_parameter_get(parameter) == null:
+			var settable_data = default_value
+			if type == "sampler2D":
+				settable_data = load(default_value)
+			var type_code = RenderingServer.global_shader_parameter_get_type(type)
+			RenderingServer.global_shader_parameter_add(parameter, type_code, settable_data)
 
 func _verify_global_shader_parameters():
-	if not ProjectSettings.has_setting("shader_globals/sgt_player_position"):
-		ProjectSettings.set_setting("shader_globals/sgt_player_position", {
-			"type": "vec3",
-			"value": Vector3(1000000, 1000000, 1000000)
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_player_position") == null:
-			RenderingServer.global_shader_parameter_add("sgt_player_position", RenderingServer.GLOBAL_VAR_TYPE_VEC3, Vector3(1000000,1000000,1000000))
-	if not ProjectSettings.has_setting("shader_globals/sgt_player_mov"):
-		ProjectSettings.set_setting("shader_globals/sgt_player_mov", {
-			"type": "vec3",
-			"value": Vector3.ZERO
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_player_mov") == null:
-			RenderingServer.global_shader_parameter_add("sgt_player_mov", RenderingServer.GLOBAL_VAR_TYPE_VEC3, Vector3.ZERO)
-	if not ProjectSettings.has_setting("shader_globals/sgt_normal_displacement"):
-		ProjectSettings.set_setting("shader_globals/sgt_normal_displacement", {
-			"type": "sampler2D",
-			"value": "res://addons/simplegrasstextured/images/normal.png"
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_normal_displacement") == null:
-			RenderingServer.global_shader_parameter_add("sgt_normal_displacement", RenderingServer.GLOBAL_VAR_TYPE_SAMPLER2D, load("res://addons/simplegrasstextured/images/normal.png"))
-	if not ProjectSettings.has_setting("shader_globals/sgt_motion_texture"):
-		ProjectSettings.set_setting("shader_globals/sgt_motion_texture", {
-			"type": "sampler2D",
-			"value": "res://addons/simplegrasstextured/images/motion.png"
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_motion_texture") == null:
-			RenderingServer.global_shader_parameter_add("sgt_motion_texture", RenderingServer.GLOBAL_VAR_TYPE_SAMPLER2D, load("res://addons/simplegrasstextured/images/motion.png"))
-	if not ProjectSettings.has_setting("shader_globals/sgt_wind_direction"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_direction", {
-			"type": "vec3",
-			"value": Vector3(1, 0, 0)
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_wind_direction") == null:
-			RenderingServer.global_shader_parameter_add("sgt_wind_direction", RenderingServer.GLOBAL_VAR_TYPE_VEC3, Vector3(1, 0, 0))
-	if not ProjectSettings.has_setting("shader_globals/sgt_wind_movement"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_movement", {
-			"type": "vec3",
-			"value": Vector2.ZERO
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_wind_movement") == null:
-			RenderingServer.global_shader_parameter_add("sgt_wind_movement", RenderingServer.GLOBAL_VAR_TYPE_VEC3, Vector3.ZERO)
-	if not ProjectSettings.has_setting("shader_globals/sgt_wind_strength"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_strength", {
-			"type": "float",
-			"value": 0.15
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_wind_strength") == null:
-			RenderingServer.global_shader_parameter_add("sgt_wind_strength", RenderingServer.GLOBAL_VAR_TYPE_FLOAT, 0.15)
-	if not ProjectSettings.has_setting("shader_globals/sgt_wind_turbulence"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_turbulence", {
-			"type": "float",
-			"value": 1.0
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_wind_turbulence") == null:
-			RenderingServer.global_shader_parameter_add("sgt_wind_turbulence", RenderingServer.GLOBAL_VAR_TYPE_FLOAT, 1.0)
-	if not ProjectSettings.has_setting("shader_globals/sgt_wind_pattern"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_pattern", {
-			"type": "sampler2D",
-			"value": "res://addons/simplegrasstextured/images/wind_pattern.png"
-		})
-		if RenderingServer.global_shader_parameter_get("sgt_wind_pattern") == null:
-			RenderingServer.global_shader_parameter_add("sgt_wind_pattern", RenderingServer.GLOBAL_VAR_TYPE_SAMPLER2D, load("res://addons/simplegrasstextured/images/wind_pattern.png"))
+	_verify_global_shader_parameter("sgt_player_position", "vec3", Vector3.ONE * 1000000)
+	_verify_global_shader_parameter("sgt_player_mov", "vec3", Vector3.ZERO)
+	_verify_global_shader_parameter("sgt_normal_displacement", "sampler2D",
+	"res://addons/simplegrasstextured/images/normal.png")
+	_verify_global_shader_parameter("sgt_motion_texture", "sampler2D",
+	"res://addons/simplegrasstextured/images/motion.png")
+	_verify_global_shader_parameter("sgt_wind_direction", "vec3", Vector3(1, 0, 0))
+	_verify_global_shader_parameter("sgt_wind_movement", "vec3", Vector2.ZERO)
+	_verify_global_shader_parameter("sgt_wind_strength", "float", 0.15)
+	_verify_global_shader_parameter("sgt_wind_turbulence", "float", 1.0)
+	_verify_global_shader_parameter("sgt_wind_pattern", "sampler2D",
+	"res://addons/simplegrasstextured/images/wind_pattern.png")
 	add_autoload_singleton("SimpleGrass", "res://addons/simplegrasstextured/singleton.tscn")
 
 
