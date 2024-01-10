@@ -138,12 +138,14 @@ func set_interactive(enable : bool) -> void:
 	if not interactive:
 		mode = SubViewport.UPDATE_ONCE
 		_dist_mesh.material_override.set_shader_parameter("heightmap_texture", _height_view.get_texture())
-		_motion2_rect.material.set_shader_parameter("prev_depth", load("res://addons/simplegrasstextured/images/motion.png"))
-		_motion1_rect.material.set_shader_parameter("prev_depth", load("res://addons/simplegrasstextured/images/motion.png"))
-		_motion1_rect.material.set_shader_parameter("cur_depth", load("res://addons/simplegrasstextured/images/motion.png"))
+		var motion = load("res://addons/simplegrasstextured/images/motion.png")
+		_motion2_rect.material.set_shader_parameter("prev_depth", motion)
+		_motion1_rect.material.set_shader_parameter("prev_depth", motion)
+		_motion1_rect.material.set_shader_parameter("cur_depth", motion)
 		_normal_rect.material.set_shader_parameter("depth_texture", _motion1_view.get_texture())
-		_blur1_rect.material.set_shader_parameter("normal_texture", load("res://addons/simplegrasstextured/images/normal.png"))
-		_blur2_rect.material.set_shader_parameter("normal_texture", load("res://addons/simplegrasstextured/images/normal.png"))
+		var normal = load("res://addons/simplegrasstextured/images/normal.png")
+		_blur1_rect.material.set_shader_parameter("normal_texture", normal)
+		_blur2_rect.material.set_shader_parameter("normal_texture", normal)
 		RenderingServer.global_shader_parameter_set("sgt_normal_displacement", _blur2_view.get_texture())
 		RenderingServer.global_shader_parameter_set("sgt_motion_texture", _motion1_view.get_texture())
 	else:
@@ -168,7 +170,7 @@ func set_interactive(enable : bool) -> void:
 func is_interactive() -> bool:
 	return interactive
 
-
+# INFO this could be an instanced scene instead of building it from scratch. Callbacks could be moved to its script.
 func set_debugger_visible(show : bool):
 	if show:
 		if _gui_debug == null:
