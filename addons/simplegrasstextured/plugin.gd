@@ -112,27 +112,21 @@ func _exit_tree():
 func _enable_plugin():
 	_verify_global_shader_parameters()
 
+func remove_project_setting(setting: String) -> void:
+	if ProjectSettings.has_setting(setting):
+		ProjectSettings.set_setting(setting, null)
 
 func _disable_plugin():
 	remove_autoload_singleton("SimpleGrass")
-	if ProjectSettings.has_setting("shader_globals/sgt_player_position"):
-		ProjectSettings.set_setting("shader_globals/sgt_player_position", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_player_mov"):
-		ProjectSettings.set_setting("shader_globals/sgt_player_mov", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_normal_displacement"):
-		ProjectSettings.set_setting("shader_globals/sgt_normal_displacement", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_motion_texture"):
-		ProjectSettings.set_setting("shader_globals/sgt_motion_texture", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_wind_direction"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_direction", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_wind_movement"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_movement", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_wind_strength"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_strength", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_wind_turbulence"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_turbulence", null)
-	if ProjectSettings.has_setting("shader_globals/sgt_wind_pattern"):
-		ProjectSettings.set_setting("shader_globals/sgt_wind_pattern", null)
+	remove_project_setting("shader_globals/sgt_player_position")
+	remove_project_setting("shader_globals/sgt_player_mov")
+	remove_project_setting("shader_globals/sgt_normal_displacement")
+	remove_project_setting("shader_globals/sgt_motion_texture")
+	remove_project_setting("shader_globals/sgt_wind_direction")
+	remove_project_setting("shader_globals/sgt_wind_movement")
+	remove_project_setting("shader_globals/sgt_wind_strength")
+	remove_project_setting("shader_globals/sgt_wind_turbulence")
+	remove_project_setting("shader_globals/sgt_wind_pattern")
 	# Fix editor crash when disable plugin while SimpleGrassTextured node is selected
 	_grass_selected = null
 	var editor = get_editor_interface()
