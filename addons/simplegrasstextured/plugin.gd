@@ -259,15 +259,17 @@ func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
 	return EditorPlugin.AFTER_GUI_INPUT_PASS
 
 func _verify_global_shader_parameter(parameter: String, type: String, default_value) -> void:
-	if not ProjectSettings.has_setting("shader_globals/" + parameter):
-		var setting = {"type": type, "value": default_value}
-		ProjectSettings.set_setting("shader_globals/" + parameter, setting)
-		if RenderingServer.global_shader_parameter_get(parameter) == null:
-			var settable_data = default_value
-			if type == "sampler2D":
-				settable_data = load(default_value)
-			var type_code = RenderingServer.global_shader_parameter_get_type(type)
-			RenderingServer.global_shader_parameter_add(parameter, type_code, settable_data)
+	if ProjectSettings.has_setting("shader_globals/" + parameter):
+		return
+	var setting = {"type": type, "value": default_value}
+	ProjectSettings.set_setting("shader_globals/" + parameter, setting)
+	if RenderingServer.global_shader_parameter_get(parameter) != null:
+		return
+	var settable_data = default_value
+	if type == "sampler2D":
+		settable_data = load(default_value)
+	var type_code = RenderingServer.global_shader_parameter_get_type(type)
+	RenderingServer.global_shader_parameter_add(parameter, type_code, settable_data)
 
 func _verify_global_shader_parameters():
 	_verify_global_shader_parameter("sgt_player_position", "vec3", Vector3.ONE * 1000000)
